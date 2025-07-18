@@ -6,6 +6,9 @@
     "build": "echo 'Static site - no build needed'",
     "start": "echo 'Static site ready'"
   },
+  "dependencies": {
+    "openai": "^4.20.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/powersunhee/guard-up-cybersecurity.git"

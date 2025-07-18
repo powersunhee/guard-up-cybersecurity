@@ -2496,9 +2496,9 @@
         async function generateAIResponse(userMessage) {
             // Try to use real AI API first, fall back to local responses
             try {
-                console.log('🤖 Attempting to call OpenAI API...');
+                console.log('🤖 Attempting to call OpenAI API via Vercel...');
                 
-                const response = await fetch('/.netlify/functions/chat', {
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2518,12 +2518,12 @@
                     if (data.fallback) {
                         // API not available, use local response with note
                         const localResponse = generateEnhancedLocalResponse(userMessage);
-                        return `${localResponse}\n\n💡 *Using built-in responses - OpenAI API not configured. The responses above are still very capable for cybersecurity analysis!*`;
+                        return `${localResponse}\n\n💡 *Using built-in responses - OpenAI API not configured in Vercel. The responses above are still very capable for cybersecurity analysis!*`;
                     }
                     
                     if (data.message) {
-                        console.log('✅ Real AI response received!');
-                        return `🤖 **AI-Powered Analysis**\n\n${data.message}\n\n*This response was generated using OpenAI's advanced AI technology.*`;
+                        console.log('✅ Real AI response received from Vercel!');
+                        return `🤖 **AI-Powered Analysis**\n\n${data.message}\n\n*This response was generated using OpenAI's advanced AI technology via Vercel.*`;
                     }
                     
                     return data.response || data.message;
@@ -2538,7 +2538,7 @@
                 // Enhanced error handling with specific messages
                 if (error.message.includes('404')) {
                     const localResponse = generateEnhancedLocalResponse(userMessage);
-                    return `${localResponse}\n\n💡 *Netlify functions not deployed yet - using smart local analysis. Deploy with functions to enable OpenAI integration!*`;
+                    return `${localResponse}\n\n💡 *Vercel functions not deployed yet - using smart local analysis. Add OpenAI API key in Vercel settings to enable AI integration!*`;
                 }
                 
                 if (error.message.includes('Failed to fetch')) {
