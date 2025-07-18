@@ -2496,7 +2496,8 @@
         async function generateAIResponse(userMessage) {
             // Try to use real AI API first, fall back to local responses
             try {
-                // Check if we're in development or if API is available
+                console.log('🤖 Attempting to call OpenAI API...');
+                
                 const response = await fetch('/.netlify/functions/chat', {
                     method: 'POST',
                     headers: {
@@ -2508,21 +2509,43 @@
                     })
                 });
 
+                console.log('📡 API Response Status:', response.status);
+
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('📊 API Response Data:', data);
                     
                     if (data.fallback) {
                         // API not available, use local response with note
                         const localResponse = generateEnhancedLocalResponse(userMessage);
-                        return `${localResponse}\n\n💡 *Using built-in responses - for advanced AI features, configure OpenAI API key in deployment settings.*`;
+                        return `${localResponse}\n\n💡 *Using built-in responses - OpenAI API not configured. The responses above are still very capable for cybersecurity analysis!*`;
                     }
                     
-                    return data.message || data.response;
+                    if (data.message) {
+                        console.log('✅ Real AI response received!');
+                        return `🤖 **AI-Powered Analysis**\n\n${data.message}\n\n*This response was generated using OpenAI's advanced AI technology.*`;
+                    }
+                    
+                    return data.response || data.message;
                 } else {
+                    const errorText = await response.text();
+                    console.error('❌ API Error:', response.status, errorText);
                     throw new Error(`API Error: ${response.status}`);
                 }
             } catch (error) {
-                console.log('AI API not available, using local responses:', error.message);
+                console.log('⚠️ AI API not available, using local responses:', error.message);
+                
+                // Enhanced error handling with specific messages
+                if (error.message.includes('404')) {
+                    const localResponse = generateEnhancedLocalResponse(userMessage);
+                    return `${localResponse}\n\n💡 *Netlify functions not deployed yet - using smart local analysis. Deploy with functions to enable OpenAI integration!*`;
+                }
+                
+                if (error.message.includes('Failed to fetch')) {
+                    const localResponse = generateEnhancedLocalResponse(userMessage);
+                    return `${localResponse}\n\n💡 *Running in local mode - these responses are still very effective for cybersecurity analysis!*`;
+                }
+                
                 // Fall back to enhanced local responses
                 return generateEnhancedLocalResponse(userMessage);
             }
@@ -2547,6 +2570,53 @@ What cybersecurity question can I help you with?`;
 
         function generateEnhancedLocalResponse(userMessage) {
             const message = userMessage.toLowerCase();
+            
+            // Test command for AI integration
+            if (message.includes('/test-ai') || message.includes('test ai integration')) {
+                return `🔧 **AI Integration Test**
+
+**Current Status:**
+• Frontend: ✅ Connected
+• Netlify Functions: Testing...
+• OpenAI API: Testing...
+
+**Debug Info:**
+• Site URL: ${window.location.origin}
+• Functions endpoint: ${window.location.origin}/.netlify/functions/chat
+• Browser console: Check for detailed logs
+
+**Next Steps:**
+1. Deploy with Netlify functions
+2. Add OPENAI_API_KEY environment variable
+3. Test with "What AI features are available?"
+
+**Local Analysis:** Always available as fallback
+**Real AI:** Requires proper deployment + API key`;
+            }
+            
+            // AI status check
+            if (message.includes('what ai features') || message.includes('ai features available')) {
+                return `🤖 **AI Features Status Check**
+
+**Available Features:**
+✅ **Smart Pattern Recognition** - Advanced scam detection
+✅ **Contextual Analysis** - Understanding suspicious content  
+✅ **Real-time Guidance** - Immediate security advice
+✅ **Multi-threat Detection** - Romance, crypto, phishing, etc.
+
+**Current Mode:** ${window.location.hostname.includes('netlify') ? 'Deployed' : 'Local'} Analysis
+
+**Upgrade to Premium AI:**
+🚀 **With OpenAI Integration:** 
+• Conversational memory
+• Personalized responses  
+• Advanced threat analysis
+• Dynamic learning
+
+**Test your integration:** Type "/test-ai"
+
+What cybersecurity question can I help you with?`;
+            }
             
             // Advanced message analysis - look for actual suspicious content
             if (message.includes('analyze this:') || message.includes('check this:')) {
