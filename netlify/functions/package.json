@@ -1,0 +1,23 @@
+{
+  "name": "guard-up-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Guard Up Cybersecurity App",
+  "main": "chat.js",
+  "dependencies": {
+    "openai": "^4.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cybersecurity",
+    "ai",
+    "chatbot",
+    "netlify-functions"
+  ],
+  "author": "Guard Up Team",
+  "license": "MIT"
+} 
